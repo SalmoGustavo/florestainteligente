@@ -1,6 +1,7 @@
 import pygame
 from constants import screen
-from classes.map import model
+from classes.map import map_model
+from classes.info import info
 
 class Home:
     def __init__(self):
@@ -8,5 +9,6 @@ class Home:
 
     @staticmethod
     def run():
-        screen.fill((255, 255, 255))
-        model.draw()
+        screen.fill((20, 25, 25))
+        map_model.draw()
+        info.draw()

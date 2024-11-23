@@ -22,7 +22,7 @@ set_dpi()
 pygame.display.init()
 pygame.display.set_caption('Floresta Inteligente - 2° EMTI 1')
 screen_size = pygame.display.get_desktop_sizes()[0]
-screen_size = (screen_size[0] / 1.2, screen_size[1] / 1.2)
+screen_size = (screen_size[0] / 1.04, screen_size[1] / 1.1)
 screen = pygame.Surface(screen_size)
 display = pygame.display.set_mode(screen_size)
 

@@ -1,6 +1,7 @@
+import os
 import pygame
 import manager
-from classes.map import model
+from classes.map import map_model
 from flask import Flask, jsonify, request
 from constants import screen, display, clock
 import threading
@@ -17,7 +18,7 @@ def fire():
     data = request.json
     print(f'[FIRE] {data}')
 
-    model.setFireFocus(data['fireIndex'])
+    map_model.toggle_fire_focus(data['fireIndex'])
 
     return jsonify({'status': 'ok'})
 
@@ -31,6 +32,10 @@ class Main:
                 if event.type == pygame.QUIT:
                     self.running = False
                     exit()
+
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        os.system('exit()')
 
             manager.run_activity()
 
