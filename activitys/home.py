@@ -1,7 +1,6 @@
 import pygame
 from constants import screen
 from classes.map import map_model
-from classes.info import info
 
 class Home:
     def __init__(self):
@@ -9,6 +8,5 @@ class Home:
 
     @staticmethod
     def run():
-        screen.fill((250, 50, 50))
+        screen.fill((30, 30, 30))  # Fundo cinza escuro para contraste
         map_model.draw()
-        info.draw()

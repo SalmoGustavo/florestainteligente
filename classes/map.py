@@ -9,7 +9,7 @@ class FireFocus:
     def __init__(self, position):
         self.id = FireFocus.next_id
         self.position = position
-        self.is_active = False
+        self.is_active = True
         self.max_radius = 80
         self.min_radius = 60
         self.radius = 5
