@@ -9,8 +9,8 @@ class FireFocus:
         self.id = FireFocus.next_id
         self.position = position
         self.is_active = False
-        self.max_radius = 100
-        self.min_radius = 80
+        self.max_radius = 80
+        self.min_radius = 60
         self.radius = 5
         self.growth_speed = 1
         self.is_expanding = True
@@ -26,8 +26,8 @@ class FireFocus:
         surface.set_alpha(128)
         return surface
 
-    def toggle(self):
-        self.is_active = not self.is_active
+    def toggle(self, active):
+        self.is_active = active
 
     def draw(self):
         if self.is_active:
@@ -87,20 +87,34 @@ class FireFocus:
 class Map:
     def __init__(self):
         self.map_size = (810, 810)
-        self.image = pygame.image.load('assets/mapa.png')
+        self.image = pygame.image.load('assets/background-2.jpg')
         self.image = pygame.transform.scale(self.image, (self.image.get_size()[0], screen_size[1]))
         self.rect = self.image.get_rect(center=(screen_size[0] / 2, screen_size[1] / 2))
         self.rect.bottomright = screen_size
-        self.fire_focus_points = [FireFocus([970, 200]), FireFocus([900, 700]), FireFocus([1500, 450])]
+        self.fire_focus_points = [FireFocus([1118, 253]), FireFocus([1600, 424]), FireFocus([1159, 682]), FireFocus([1627, 709]),
+                                  FireFocus([1425, 385])]
 
     def draw(self):
         screen.blit(self.image, self.rect.topleft)
         for fire_focus in self.fire_focus_points:
             fire_focus.draw()
 
-    def toggle_fire_focus(self, index):
-        if 0 <= index < len(self.fire_focus_points):
-            self.fire_focus_points[index].toggle()
+    def toggle_fire_focus(self, s1, s2, s3, s4):
+        if s1 and s2 and s3:
+            self.fire_focus_points[4].toggle(True)
+            self.fire_focus_points[0].toggle(False)
+            self.fire_focus_points[1].toggle(False)
+            self.fire_focus_points[2].toggle(False)
+            self.fire_focus_points[3].toggle(False)
+
+            return None
+        else:
+            self.fire_focus_points[4].toggle(False)
+
+        self.fire_focus_points[0].toggle(s1)
+        self.fire_focus_points[1].toggle(s2)
+        self.fire_focus_points[2].toggle(s3)
+        self.fire_focus_points[3].toggle(s4)
 
 
 # Instancia do mapa principal

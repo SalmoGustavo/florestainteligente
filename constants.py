@@ -26,6 +26,9 @@ screen_size = (screen_size[0] / 1.04, screen_size[1] / 1.1)
 screen = pygame.Surface(screen_size)
 display = pygame.display.set_mode(screen_size)
 
+print(display.get_size())
+
+
 # Clock
 
 clock = pygame.time.Clock()

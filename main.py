@@ -16,10 +16,13 @@ def index():
 @app.route('/fire', methods=['POST'])
 def fire():
     data = request.json
-    print(f'[FIRE] {data}')
 
-    map_model.toggle_fire_focus(data['fireIndex'])
+    s1 = data['s1']
+    s2 = data['s2']
+    s3 = data['s3']
+    s4 = data['s4']
 
+    map_model.toggle_fire_focus(s1, s2, s3, s4)
     return jsonify({'status': 'ok'})
 
 class Main:
@@ -36,6 +39,9 @@ class Main:
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
                         os.system('exit()')
+
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    print(pygame.mouse.get_pos())
 
             manager.run_activity()
 
