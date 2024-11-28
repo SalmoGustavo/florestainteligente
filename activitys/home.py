@@ -9,6 +9,6 @@ class Home:
 
     @staticmethod
     def run():
-        screen.fill((20, 25, 25))
+        screen.fill((250, 50, 50))
         map_model.draw()
         info.draw()
