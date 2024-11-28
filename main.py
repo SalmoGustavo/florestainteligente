@@ -14,6 +14,7 @@ def index():
 
 @app.route('/fire', methods=['POST'])
 def fire():
+    print('requisição')
     data = request.json
 
     s1 = data.get('s1', False)

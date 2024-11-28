@@ -9,7 +9,7 @@ class FireFocus:
     def __init__(self, position):
         self.id = FireFocus.next_id
         self.position = position
-        self.is_active = True
+        self.is_active = False
         self.max_radius = 80
         self.min_radius = 60
         self.radius = 5
@@ -73,42 +73,75 @@ class FireFocus:
             self.wave_effect_active = False
 
 
+import requests
+
 class Sidebar:
     def __init__(self):
         self.width = 300
         self.height = screen_size[1]
-        self.bg_color = (30, 30, 60)
+        self.bg_color = (30, 30, 60)  # Cor sólida da Sidebar
         self.font_color = (255, 255, 255)
         self.font = pygame.font.Font(None, 36)
         self.info_font = pygame.font.Font(None, 28)
         self.title = "Monitoramento"
-        self.info = [
-            ("Focos de incêndio", "🔥 5"),
-            ("Temperatura média", "🌡️ 35°C"),
-            ("Umidade", "💧 40%"),
-            ("Velocidade do vento", "🌬️ 15 km/h"),
-        ]
+        self.api_key = "14b7f3ebd1adcc310b334c4f49b3ab47"
+        self.city = "Itinga,BR"
+        self.weather_info = None
+        self.fetch_weather_data()
+
+    def fetch_weather_data(self):
+        """Busca dados climáticos da API OpenWeatherMap."""
+        url = f"https://api.openweathermap.org/data/2.5/weather?q={self.city}&appid={self.api_key}&units=metric&lang=pt_br"
+        try:
+            response = requests.get(url)
+            if response.status_code == 200:
+                data = response.json()
+                self.weather_info = {
+                    "temperature": f"{data['main']['temp']}°C",
+                    "humidity": f"{data['main']['humidity']}%",
+                    "wind_speed": f"{data['wind']['speed']} m/s",
+                    "description": data['weather'][0]['description'].capitalize(),
+                }
+            else:
+                print(f"Erro ao buscar dados climáticos: {response.status_code}")
+        except Exception as e:
+            print(f"Erro na requisição da API: {e}")
 
     def draw(self):
-        sidebar_surface = pygame.Surface((self.width, self.height))
-        for y in range(self.height):
-            grad_color = (30 + y // 20, 30, 80 + y // 40)
-            pygame.draw.line(sidebar_surface, grad_color, (0, y), (self.width, y))
-        screen.blit(sidebar_surface, (0, 0))
+        # Atualiza os dados climáticos
 
+        # Preencher a barra lateral com cor sólida
+        sidebar_rect = pygame.Rect(0, 0, self.width, self.height)
+        pygame.draw.rect(screen, self.bg_color, sidebar_rect)
+
+        # Desenhar o título
         title_surface = self.font.render(self.title, True, self.font_color)
         title_rect = title_surface.get_rect(center=(self.width // 2, 50))
         screen.blit(title_surface, title_rect)
 
+        # Exibir os dados climáticos, se disponíveis
         y_offset = 120
-        for label, value in self.info:
-            label_surface = self.info_font.render(label, True, self.font_color)
-            value_surface = self.info_font.render(value, True, (200, 200, 255))
-            label_rect = label_surface.get_rect(left=20, top=y_offset)
-            value_rect = value_surface.get_rect(left=20, top=y_offset + 30)
-            screen.blit(label_surface, label_rect)
-            screen.blit(value_surface, value_rect)
-            y_offset += 80
+        if self.weather_info:
+            info_data = [
+                ("Condição", self.weather_info["description"]),
+                ("Temperatura", self.weather_info["temperature"]),
+                ("Umidade", self.weather_info["humidity"]),
+                ("Vento", self.weather_info["wind_speed"]),
+            ]
+
+            for label, value in info_data:
+                label_surface = self.info_font.render(label, True, self.font_color)
+                value_surface = self.info_font.render(value, True, (200, 200, 255))
+                label_rect = label_surface.get_rect(left=20, top=y_offset)
+                value_rect = value_surface.get_rect(left=20, top=y_offset + 30)
+                screen.blit(label_surface, label_rect)
+                screen.blit(value_surface, value_rect)
+                y_offset += 80
+        else:
+            # Mensagem de erro, caso os dados não sejam carregados
+            error_surface = self.info_font.render("Erro ao carregar dados", True, self.font_color)
+            screen.blit(error_surface, (20, y_offset))
+
 
 
 class Map:
@@ -117,8 +150,8 @@ class Map:
         self.image = pygame.image.load('assets/background-2.jpg')
         self.image = pygame.transform.scale(self.image, (self.image.get_size()[0], screen_size[1]))
         self.rect = self.image.get_rect(center=(screen_size[0] / 2 + 150, screen_size[1] / 2))
-        self.fire_focus_points = [FireFocus([1118, 253]), FireFocus([1600, 424]), FireFocus([1159, 682]),
-                                  FireFocus([1627, 709]), FireFocus([1425, 385])]
+        self.fire_focus_points = [FireFocus([757, 260]), FireFocus([1257, 264]), FireFocus([758, 721]),
+                                  FireFocus([1200, 848]), FireFocus([1070, 362])]
         self.sidebar = Sidebar()
 
     def draw(self):
@@ -128,7 +161,8 @@ class Map:
             fire_focus.draw()
 
     def toggle_fire_focus(self, s1, s2, s3, s4):
-        if s1 and s2 and s3:
+        print(type(s1))
+        if s1 == 1 and s2 == 1 and s4 == 1:
             self.fire_focus_points[4].toggle(True)
             self.fire_focus_points[0].toggle(False)
             self.fire_focus_points[1].toggle(False)
