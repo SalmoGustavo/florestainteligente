@@ -1,4 +1,5 @@
 import pygame
+import requests
 from constants import screen, screen_size
 
 pygame.font.init()
@@ -10,8 +11,8 @@ class FireFocus:
         self.id = FireFocus.next_id
         self.position = position
         self.is_active = False
-        self.max_radius = 80
-        self.min_radius = 60
+        self.max_radius = 120
+        self.min_radius = 100
         self.radius = 5
         self.growth_speed = 1
         self.is_expanding = True
@@ -27,7 +28,10 @@ class FireFocus:
         return surface
 
     def toggle(self, active):
-        self.is_active = active
+        if active != self.is_active:
+            self.is_active = active
+            if active:
+                requests.get('https://trigger.macrodroid.com/6c3d142f-f648-4c17-8564-ad0f4bc72086/fogo')
 
     def draw(self):
         if self.is_active:
@@ -150,11 +154,11 @@ class Sidebar:
 class Map:
     def __init__(self):
         self.map_size = (810, 810)
-        self.image = pygame.image.load('assets/background-3 (1).png')
-        self.image = pygame.transform.scale(self.image, (self.image.get_size()[0], screen_size[1]))
+        self.image = pygame.image.load('assets/top-map.png')
+        self.image = pygame.transform.scale(self.image, (self.image.get_size()[0] / 1.4, self.image.get_size()[1] / 1.4))
         self.rect = self.image.get_rect(center=(screen_size[0] / 2 + 150, screen_size[1] / 2))
-        self.fire_focus_points = [FireFocus([757, 260]), FireFocus([1257, 264]), FireFocus([758, 721]),
-                                  FireFocus([1200, 848]), FireFocus([1070, 362])]
+        self.fire_focus_points = [FireFocus([854, 276]), FireFocus([1163, 444]), FireFocus([752, 770]),
+                                  FireFocus([1217, 709]), FireFocus([1061, 494])]
         self.sidebar = Sidebar()
 
     def count_active_fire_focus(self):
@@ -172,8 +176,12 @@ class Map:
         for fire_focus in self.fire_focus_points:
             fire_focus.draw()
 
+
     def toggle_fire_focus(self, s1, s2, s3, s4):
-        if s1 == 1 and s2 == 1 and s4 == 1:
+        print(s1, s2, s3, s4)
+        print(bool(s1 == 1 and s3 == 1 and s4 == 1))
+
+        if s1 == 1 and s2 == 1 and s3 == 1:
             self.fire_focus_points[4].toggle(True)
             self.fire_focus_points[0].toggle(False)
             self.fire_focus_points[1].toggle(False)
@@ -183,10 +191,10 @@ class Map:
         else:
             self.fire_focus_points[4].toggle(False)
 
-        self.fire_focus_points[0].toggle(s1)
-        self.fire_focus_points[1].toggle(s2)
-        self.fire_focus_points[2].toggle(s3)
-        self.fire_focus_points[3].toggle(s4)
+        self.fire_focus_points[0].toggle(s4)
+        self.fire_focus_points[1].toggle(s3)
+        self.fire_focus_points[2].toggle(s2)
+        self.fire_focus_points[3].toggle(s1)
 
 
 map_model = Map()
