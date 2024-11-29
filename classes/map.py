@@ -87,6 +87,7 @@ class Sidebar:
         self.api_key = "14b7f3ebd1adcc310b334c4f49b3ab47"
         self.city = "Itinga,BR"
         self.weather_info = None
+        self.active_fire_focus_count = 0  # Contagem inicial de focos ativos
         self.fetch_weather_data()
 
     def fetch_weather_data(self):
@@ -107,9 +108,11 @@ class Sidebar:
         except Exception as e:
             print(f"Erro na requisição da API: {e}")
 
-    def draw(self):
-        # Atualiza os dados climáticos
+    def set_fire_focus_count(self, count):
+        """Atualiza a quantidade de focos de incêndio detectados."""
+        self.active_fire_focus_count = count
 
+    def draw(self):
         # Preencher a barra lateral com cor sólida
         sidebar_rect = pygame.Rect(0, 0, self.width, self.height)
         pygame.draw.rect(screen, self.bg_color, sidebar_rect)
@@ -127,6 +130,7 @@ class Sidebar:
                 ("Temperatura", self.weather_info["temperature"]),
                 ("Umidade", self.weather_info["humidity"]),
                 ("Vento", self.weather_info["wind_speed"]),
+                ("Focos ativos", str(self.active_fire_focus_count)),  # Quantidade de focos ativos
             ]
 
             for label, value in info_data:
@@ -143,7 +147,6 @@ class Sidebar:
             screen.blit(error_surface, (20, y_offset))
 
 
-
 class Map:
     def __init__(self):
         self.map_size = (810, 810)
@@ -154,14 +157,22 @@ class Map:
                                   FireFocus([1200, 848]), FireFocus([1070, 362])]
         self.sidebar = Sidebar()
 
+    def count_active_fire_focus(self):
+        """Conta os focos de incêndio ativos."""
+        return sum(1 for focus in self.fire_focus_points if focus.is_active)
+
     def draw(self):
+        # Atualizar a quantidade de focos ativos
+        active_count = self.count_active_fire_focus()
+        self.sidebar.set_fire_focus_count(active_count)
+
+        # Desenhar o mapa e a Sidebar
         screen.blit(self.image, self.rect.topleft)
         self.sidebar.draw()
         for fire_focus in self.fire_focus_points:
             fire_focus.draw()
 
     def toggle_fire_focus(self, s1, s2, s3, s4):
-        print(type(s1))
         if s1 == 1 and s2 == 1 and s4 == 1:
             self.fire_focus_points[4].toggle(True)
             self.fire_focus_points[0].toggle(False)
