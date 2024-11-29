@@ -147,7 +147,7 @@ class Sidebar:
 class Map:
     def __init__(self):
         self.map_size = (810, 810)
-        self.image = pygame.image.load('assets/background-2.jpg')
+        self.image = pygame.image.load('assets/background-3 (1).png')
         self.image = pygame.transform.scale(self.image, (self.image.get_size()[0], screen_size[1]))
         self.rect = self.image.get_rect(center=(screen_size[0] / 2 + 150, screen_size[1] / 2))
         self.fire_focus_points = [FireFocus([757, 260]), FireFocus([1257, 264]), FireFocus([758, 721]),
